@@ -227,17 +227,24 @@ function clearPlayground() {
     if (buttonsToErase[i].hasOwnProperty("originalId")) {
       currentButton = document.getElementById(buttonsToErase[i].elementId);
       currentButton.id = buttonsToErase[i].originalId;
+      currentButton.style.display = "none";
+      currentButton.childNodes[1].innerHTML = "";
       console.log("* original id set to button")
       continue;
     }
     currentButton = document.getElementById(buttonsToErase[i].elementId);
+    if (currentButton.classList.contains("math-operation")) {
+      currentButton.classList.remove("math-operation");
+    }
     currentButton.style.display = "none";
+    currentButton.childNodes[1].innerHTML = "";
     console.log("* button hidden");
   }
   buttonsToErase.length = 0;
   originalLevelCopy.operVal = levels[currentLevelNumber].operVal;
   originalLevelCopy.stepsAvailable = levels[currentLevelNumber].stepsAvailable;
   calculatorFace.style.backgroundPosition = "0px -115px";
+  hasFloatingPoint = 0;
   return true;
 }
 
