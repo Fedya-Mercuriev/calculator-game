@@ -187,6 +187,13 @@ body {
   cursor: pointer;
 }
 
+.button:active {
+  -webkit-box-shadow: inset 0px -4px 0px 0px rgba(24,26,30,1);
+  -moz-box-shadow: inset 0px -4px 0px 0px rgba(24,26,30,1);
+  box-shadow: inset 0px -4px 0px 0px rgba(24,26,30,1);
+  transform: translateY(4px);
+}
+
 .button__text {
   display: block;
   width: 100%;
@@ -252,6 +259,7 @@ body {
   -webkit-box-shadow: inset 0px -8px 0px 0px rgba(197,60,0,1);
   -moz-box-shadow: inset 0px -8px 0px 0px rgba(197,60,0,1);
   box-shadow: inset 0px -8px 0px 0px rgba(197,60,0,1);
+  font-size: 0.8em;
 }
 
 #delete-last-digit {
