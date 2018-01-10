@@ -13,18 +13,14 @@
       originalLevelCopy,
       buttonsToErase = [],
       hasFloatingPoint = 0,
-      levelNumber = document.getElementById("level-number"),
-      calculatorFace = document.getElementById("calculator-face--regular-sad"),
-      displayValue = document.getElementById("current-value--error-success"),
-      moves = document.getElementById("moves-number"),
-      goalNumber = document.getElementById("goal-value"),
-      clearButton = document.getElementById("clear");
-
-  clearButton.addEventListener("click", function() {
-    if (clearPlayground() && loadGameData()) {
-      makePlayground();
-    }
-  });
+      levelNumber = document.getElementById('level-number'),
+      calculatorFace = document.getElementById('calculator-face--regular-sad'),
+      displayValue = document.getElementById('current-value--error-success'),
+      moves = document.getElementById('moves-number'),
+      goalNumber = document.getElementById('goal-value'),
+      clearOkButton,
+      buildClearButton = clearOkButtonFunctions(),
+      buildOkButton = clearOkButtonFunctions('ok');
 
   // FINDING CURRENT LEVEL
   function findCurrentLevel() {
@@ -91,18 +87,59 @@
     return false;
   }
 
-  /* "BUILD-BUTTON" FUNCTION:
-    1) ADDS ID TO THE BUTTON;
-    2) WRITES THE OPERATION SIGN AND AN OPERATION VALUE OF THE OPERATION ON THE BUTTON;
-    3) DISPLAYS THE BUTTON (display: flex);
-    4) ADDS EVENT LISTENER TO THE BUTTON WITH A SPECIFIC OPERATION AS A HANDLER;
-  */
+//TODO: OK AND CLEAR BUTTONS ISSUE
+  function clearOkButtonFunctions() {
+    var okEventHandler = function () {
+      var button = document.getElementById('ok');
+      button.id = 'clear';
+      levels[currentLevelNumber].isCurrent = false;
+      currentLevelNumber++;
+      levels[currentLevelNumber].isCurrent = true;
+      Object.keys(originalLevelCopy).forEach(function (prop) {
+        delete originalLevelCopy[prop];
+      });
+
+      loadGameData();
+      makePlayground();
+    },
+    clearEventHandler = function () {
+      if (clearPlayground() && loadGameData()) {
+        makePlayground();
+      }
+    };
+
+    if (arguments[0] == 'ok') {
+      return function() {
+        clearOkButton.id = "ok";
+        clearOkButton = document.getElementById('ok');
+        clearOkButton.childNodes[1].innerHTML = "OK";
+        clearOkButton.addEventListener('click', okEventHandler);
+      };
+    } else if (arguments[0] == 'removeOk') {
+      return function() {
+        clearOkButton = document.getElementById('ok');
+        clearOkButton.removeEventListener('ok', okEventHandler);
+      };
+    } else if (arguments[0] == 'removeClear') {
+      return function () {
+        clearOkButton = document.getElementById('clear');
+        clearOkButton.removeEventListener('click', clearEventHandler);
+      };
+    } else {
+      return function() {
+        clearOkButton = document.getElementById('clear');
+        clearOkButton.childNodes[1].innerHTML = "CLR";
+        clearOkButton.addEventListener('click', clearEventHandler);
+      };
+    }
+  }
 
 // FILLING THE CONTROL PANEL WITH BUTTONS FROM CURRENT LEVEL
 function makePlayground() {
  var buttonNumber = 2,
      buttonName = "button-",
-     buttonsUsed = [];
+     buttonsUsed = [],
+     clearOkButton = buildClearButton();
 
 // THE FUNCTION THAT CREATES THE BUTTONS AND ADDS ATTRIBUTES TO IT
 function buildButton(number) {
@@ -115,12 +152,12 @@ function buildButton(number) {
     button.setAttribute("id", operationName);
     button.childNodes[1].innerHTML = operationName;
     button.style.display = "flex";
-    button.addEventListener("click", calcFunction);
+    button.addEventListener('click', calcFunction);
   } else {
     let operationName = getOperationName(originalLevelCopy.operationsAvailable[number]);
     button.childNodes[1].innerHTML = "" + operationName + originalLevelCopy.operationsAvailable[number]("showVal");
     button.style.display = "flex";
-    button.addEventListener("click", calcFunction);
+    button.addEventListener('click', calcFunction);
     button.classList.add("math-operation");
   }
   buttonsToErase[number] = {};
@@ -177,6 +214,7 @@ function calculate(funcNumber) {
     return error();
   // СМОТРИМ РАВНЯЕТСЯ ЛИ РЕЗУЛЬТАТ ВЫЧИСЛЕНИЙ ЦЕЛЕВОМУ ЗНАЧЕНИЮ
   } else if (result == this.goal) {
+    clearOkButton = buildOkButton();
     return solved();
   } else {
   // БУДЕТ ВЫВОДИТЬСЯ ФУНКЦИЯ, КОТОРАЯ БУДЕТ СООБЩАТЬ, ЧТО ЗАДАЧА РЕШЕНА
@@ -204,6 +242,8 @@ function failed() {
 // THE FUNCTION THAT GETS INVOKED WHEN THE OBJECTIVE IS SOLVED
 function solved(result) {
   displayValue.innerHTML = "WIN";
+  disableButtons();
+  clearPlayground();
   // ВЫЗВАТЬ ФУНКЦИЮ ПЕРЕКЛЮЧАЮЩУЮ УРОВЕНЬ, А ПОТОМ ВЕРНУТЬ ПАРАМЕТРЫ ТЕКУЩЕГО УРОВНЯ ДО ДЕФОЛТНЫХ
 // TODO: Add a blink() function that will make a text on the display blink when the function is envoked #solved;
   return "Solved!";
@@ -214,12 +254,11 @@ function disableButtons() {
   var currentButton;
   for (var i = 0; i < buttonsToErase.length; i++) {
     currentButton = document.getElementById(buttonsToErase[i].elementId);
-    currentButton.removeEventListener("click", buttonsToErase[i].operation);
+    currentButton.removeEventListener('click', buttonsToErase[i].operation);
   }
 }
 
 // THE FUNCTION THAT HIDES ALL BUTTONS AND RESTORES VALUES TO DEFAULT
-// TODO: SOLVE THE CLEAR-PLAYGROUND PROBLEM (WORKS SORTA FINE, BUT STILL HAS ISSUES)
 function clearPlayground() {
   var currentButton;
   disableButtons();
