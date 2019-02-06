@@ -10,20 +10,29 @@ var levels = {
   },
   2: {
     isCurrent: false,
-    stepsAvailable: 2,
-    operationsAvailable: [mathOperations['+'](2), mathOperations['-'](3)],
+    stepsAvailable: 3,
+    operationsAvailable: [mathOperations['+'](1), mathOperations['+'](2), mathOperations['*'](4)],
     initValue: 0,
-    goal: 4,
+    goal: 12,
     operValIsArray: false,
     operVal: 0
   },
   3: {
     isCurrent: false,
     stepsAvailable: 3,
-    operationsAvailable:  [mathOperations['+'](2), mathOperations['-'](3), mathOperations['/'](2), otherOperations['reverse']],
-    initValue: 0,
-    goal: 6,
+    operationsAvailable:  [mathOperations['-'](2), mathOperations['+'](4)],
+    initValue: 1,
+    goal: 7,
     operValIsArray: false,
-    operVal: 0
-  }
+    operVal: 1
+  },
+  4: {
+    isCurrent: false,
+    stepsAvailable: 4,
+    operationsAvailable:  [mathOperations['+'](2), mathOperations['*'](4)],
+    initValue: 1,
+    goal: 64,
+    operValIsArray: false,
+    operVal: 1
+  },
 };
