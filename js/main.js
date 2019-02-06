@@ -210,7 +210,7 @@ function calculate(funcNumber) {
   this.stepsAvailable--;
   moves.innerHTML = this.stepsAvailable;
   if (this.stepsAvailable == 0 && result != this.goal) failed();
-  if (result > maxlength) {
+  if (result.toString().length > maxlength) {
     return error();
   // СМОТРИМ РАВНЯЕТСЯ ЛИ РЕЗУЛЬТАТ ВЫЧИСЛЕНИЙ ЦЕЛЕВОМУ ЗНАЧЕНИЮ
   } else if (result == this.goal) {
